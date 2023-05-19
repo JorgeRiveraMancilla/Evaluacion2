@@ -1,0 +1,166 @@
+<div class="row justify-content-center">
+  <div class="col-10 d-flex mb-4">
+    <button
+      type="button"
+      class="btn btn-outline-primary me-4"
+      (click)="openModal(template, undefined)"
+    >
+      Agregar ítem
+    </button>
+
+    <input class="form-control w-auto me-2" type="search" placeholder="Buscar" [(ngModel)]="search">
+    <button class="btn btn-outline-secondary" type="button" (click)="searchItems()">Buscar</button>
+  </div>
+
+  <div class="col-10" *ngIf="message?.success">
+    <div class="alert alert-dismissible alert-success mb-2">
+      <button type="button" class="btn-close" data-bs-dismiss="alert" (click)="closeAlert()"></button>
+      <strong>Well done!</strong> {{ message?.message }}.
+    </div>
+  </div>
+
+  <div class="col-10" *ngIf="messageError">
+    <div class="alert alert-dismissible alert-danger mb-2">
+      <button type="button" class="btn-close" data-bs-dismiss="alert" (click)="closeAlertError()"></button>
+      <strong>Error!</strong> {{ messageError }}.
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-10">
+    <table class="table table-hover table-responsive-xxl">
+      <thead>
+      <tr class="table-primary">
+        <th scope="col" class="align-middle">ID</th>
+        <th scope="col" class="align-middle">Código</th>
+        <th scope="col" class="align-middle">Nombre</th>
+        <th scope="col" class="align-middle">Descripción</th>
+        <th scope="col" class="align-middle">Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of items">
+        <td>{{ item.id }}</td>
+        <td>{{ item.code }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.description }}</td>
+        <td>
+          <div class="d-flex flex-row gap-2">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              (click)="openModal(template, item.id)"
+            >
+              Editar
+            </button>
+            <button
+              class="btn btn-outline-danger"
+              (click)="deleteItem(item.id)"
+            >
+              Eliminar
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">{{ modelId ? 'Editar ítem' : 'Agregar ítem'}}</h4>
+
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <form #form="ngForm" id="form" (ngSubmit)="submitForm(modelId)" autocomplete="off">
+      <div class="row mb-3" *ngIf="modelId">
+        <label for="id" class="col-sm-2 col-form-label">ID:</label>
+        <div class="col-sm-10">
+          <input type="text" readonly="" class="form-control-plaintext" id="id" value="{{ modelId }}">
+        </div>
+      </div>
+
+      <div class="form-group has-danger mb-3">
+        <label class="form-label" for="code">Código:</label>
+
+        <input
+          required
+          type="text"
+          class="form-control"
+          [ngClass]="{'is-invalid': modalErrors?.code}"
+          id="code"
+          name="code"
+          placeholder="Ingrese el código"
+          [(ngModel)]="model.code"
+        >
+
+        <small *ngIf="modalErrors?.code == null" id="codeHelp" class="form-text text-muted">5 caracteres máximo.</small>
+
+        <div *ngIf="modalErrors?.code" class="invalid-feedback">{{ modalErrors.code }}</div>
+      </div>
+
+      <div class="form-group has-danger mb-3">
+        <label class="form-label" for="name">Nombre:</label>
+
+        <input
+          required
+          type="text"
+          class="form-control"
+          [ngClass]="{'is-invalid': modalErrors?.name}"
+          id="name"
+          name="name"
+          placeholder="Ingrese el nombre"
+          [(ngModel)]="model.name"
+        >
+
+        <small *ngIf="modalErrors?.name == null" id="nameHelp" class="form-text text-muted">255 caracteres máximo.</small>
+
+        <div *ngIf="modalErrors?.name" class="invalid-feedback">{{ modalErrors.name }}</div>
+      </div>
+
+      <div class="form-group has-danger mb-3">
+        <label class="form-label" for="description">Descripción:</label>
+
+        <input
+          required
+          type="text"
+          class="form-control"
+          [ngClass]="{'is-invalid': modalErrors?.description}"
+          id="description"
+          name="description"
+          placeholder="Ingrese la descripción"
+          [(ngModel)]="model.description"
+        >
+
+        <small *ngIf="modalErrors?.description == null" id="descriptionHelp" class="form-text text-muted">65535 caracteres máximo.</small>
+
+        <div *ngIf="modalErrors?.description" class="invalid-feedback">{{ modalErrors.description }}</div>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      type="submit"
+      class="btn btn-success"
+      form="form"
+    >
+      {{ modelId ? 'Editar' : 'Agregar' }}
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-danger"
+      data-bs-dismiss="modal"
+      (click)="closeModal()"
+    >
+      Cancelar
+    </button>
+  </div>
+</ng-template>
