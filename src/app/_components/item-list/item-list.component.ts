@@ -63,6 +63,7 @@ export class ItemListComponent implements OnInit {
         } else {
           this.closeModal();
           this.loadItems();
+          this.closeAlert();
           this.messageError = error.error.message;
         }
         console.log(error);
